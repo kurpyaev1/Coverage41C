@@ -18,6 +18,16 @@ repositories {
     maven { url 'https://repo1.maven.org/maven2/' }
 }
 
+configurations {
+    edtLibs {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    compileOnly {
+        extendsFrom edtLibs
+    }
+}
+
 
 dependencies {
     def output = new ByteArrayOutputStream()
@@ -74,7 +84,7 @@ dependencies {
         exclude group: "org.glassfish", module: "javax.json"
     }
 
-    compileOnly fileTree(edtLocation) { include 'com._1c.g5.v8.dt.debug.*.jar' }
+    edtLibs fileTree(edtLocation) { include 'com._1c.g5.v8.dt.debug.*.jar' }
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
@@ -85,18 +95,18 @@ dependencies {
 }
 
 tasks.withType(JavaCompile) {
-    sourceSets.main.compileClasspath += configurations.compileOnly
+    sourceSets.main.compileClasspath += configurations.edtLibs
     options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
     options.encoding = 'UTF-8'
 }
 
 run {
-    classpath += configurations.compileOnly
+    classpath += configurations.edtLibs
 }
 
 test {
     finalizedBy jacocoTestReport
-    classpath += configurations.compileOnly
+    classpath += configurations.edtLibs
     useJUnitPlatform()
     testLogging.showStandardStreams = true
 }
