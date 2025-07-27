@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import picocli.CommandLine.Option;
 
 import java.lang.invoke.MethodHandles;
+import java.util.List;
 
 public class MetadataOptions {
 
@@ -40,6 +41,21 @@ public class MetadataOptions {
 
     @Option(names = {"-r", "--removeSupport"}, description = "Remove support values: ${COMPLETION-CANDIDATES}. Default - ${DEFAULT-VALUE}", defaultValue = "NONE")
     private SupportVariant removeSupport;
+
+    @Option(names = {"--includeDirs"},
+            description = "Список каталогов (через запятую), для которых необходимо строить покрытие",
+            split = ",",
+            defaultValue = "")
+    private List<String> includeDirs;
+
+    @Option(names = {"--excludeDirs"},
+            description = "Список каталогов, которые необходимо исключить",
+            split = ",",
+            defaultValue = "")
+    private List<String> excludeDirs;
+
+    public List<String> getIncludeDirs() { return includeDirs; }
+    public List<String> getExcludeDirs() { return excludeDirs; }
 
     private void updatePaths() {
         if (projectDirName.isEmpty() && !srcDirName.isEmpty()) {

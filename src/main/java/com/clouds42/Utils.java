@@ -227,6 +227,20 @@ public class Utils {
                 for (MDOModule module : conf.getModules()) {
                     ModuleOwner mdObj = module.getOwner();
 
+                    Path modulePath = Paths.get(module.getUri());
+                    Path relative = rootPath.relativize(modulePath);
+                    String topSegment = relative.iterator().next().toString();
+
+                    if (!metadataOptions.getIncludeDirs().isEmpty() &&
+                            !metadataOptions.getIncludeDirs().contains(topSegment)) {
+                        continue;
+                    }
+                    if (metadataOptions.getExcludeDirs().contains(topSegment)) {
+                        continue;
+                    }
+
+
+
                     String mdObjUuid = mdObj.getUuid();
 
                     uriListByKey.put(getUriKey(mdObjUuid, module.getModuleType(), mdObj), module.getUri());
